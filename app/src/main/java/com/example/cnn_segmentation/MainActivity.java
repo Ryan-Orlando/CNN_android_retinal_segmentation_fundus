@@ -3,6 +3,7 @@ package com.example.cnn_segmentation;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,7 +24,7 @@ import java.nio.channels.FileChannel;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button gallery, predict_retinal, predict_retinal_mobile;
+    Button gallery, predict_retinal, predict_retinal_mobile, camera;
     ImageView imageview;
     TextView timer;
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        camera = findViewById(R.id.button_camera);
         gallery = findViewById(R.id.button_gallery);
         predict_retinal = findViewById(R.id.button_predict_retinal);
         predict_retinal_mobile = findViewById(R.id.button_predict_retinal_mobile);
@@ -78,6 +80,25 @@ public class MainActivity extends AppCompatActivity {
         timer = findViewById(R.id.textView);
 
         timer.setText(message);
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("In the camera function now");
+//                if (checkSelfPermission(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) { //Manifest.permission.CAMERA
+//                    System.out.println("Wanting img\n");
+//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    startActivityForResult(cameraIntent, 3);
+//                } else {
+//                    System.out.println("Wanting perms\n");
+//                    requestPermissions(new String[]{android.Manifest.permission.CAMERA}, 100);
+//                    System.out.println(android.Manifest.permission.CAMERA);
+//                }
+                System.out.println("Wanting img\n");
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, 3);
+            }
+        });
 
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -407,10 +428,8 @@ public class MainActivity extends AppCompatActivity {
         // when selected the image
         @Override
         protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-            if(resultCode==RESULT_OK)
-            {
-                if(requestCode == 1)
-                {
+            if(resultCode==RESULT_OK) {
+                if (requestCode == 1) {
                     Uri dat = data.getData();
                     Bitmap image = null;
                     try {
@@ -426,9 +445,20 @@ public class MainActivity extends AppCompatActivity {
                     global_image = image;
 
                     timer.setText("Previous time: " + message);
-                }
+                } else if (requestCode == 3) {
+                    System.out.println("Waiting for camera event\n");
+                    Bitmap image = (Bitmap) data.getExtras().get("data");
+                    int dimension = Math.min(image.getWidth(), image.getHeight());
+                    image = ThumbnailUtils.extractThumbnail(image, dimension, dimension);
+
+                    imageview.setImageBitmap(image);
+
+                    image = Bitmap.createScaledBitmap(image, img_dim, img_dim, false);
+
+                    global_image = image;
 
                 }
+            }
             super.onActivityResult(requestCode, resultCode, data);
         }
 }

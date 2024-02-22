@@ -6,6 +6,18 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/button_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="177dp"
+        android:text="Camera"
+        android:textAllCaps="false"
+        android:textSize="21sp"
+        android:textStyle="bold" />
+
+    <Button
         android:id="@+id/button_predict_retinal_mobile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
